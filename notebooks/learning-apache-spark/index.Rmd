@@ -1,0 +1,117 @@
+---
+title: '[Learning Apache Spark](https://github.com/MingChen0919/learning-apache-spark)'
+output:
+    html_document:
+      highlight: pygments
+---
+
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_knit$set(progress = FALSE)
+knitr::opts_chunk$set(error = TRUE, echo = FALSE)
+library(htmltools)
+```
+
+```{r, echo=FALSE}
+# to make the css theme to work, <link></link> tags cannot be added directly 
+# as <script></script> tags as below.
+# it has to be added using a code chunk with the htmltool functions!!!
+css_link = tags$link()
+css_link$attribs = list(rel="stylesheet", href="vakata-jstree-3.3.5/dist/themes/default/style.min.css")
+css_link
+```
+
+```{r, eval=FALSE, echo=FALSE}
+# this code chunk is purely for adding comments
+# below is to add jQuery and jstree javascripts
+```
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="vakata-jstree-3.3.5/dist/jstree.min.js"></script>
+
+```{r, eval=FALSE, echo=FALSE}
+# this code chunk is purely for adding comments
+# javascript code below is to build the file tree interface
+# see this for how to implement opening hyperlink: https://stackoverflow.com/questions/18611317/how-to-get-i-get-leaf-nodes-in-jstree-to-open-their-hyperlink-when-clicked-when
+```
+<script>
+  $(function () {
+    // create an instance when the DOM is ready
+    $('#jstree').jstree().bind("select_node.jstree", function (e, data) {
+     window.open( data.node.a_attr.href, data.node.a_attr.target )
+    });
+  });
+</script>
+
+
+```{r}
+file_tree = function(dir = '.'){
+  # # get the OUTPUT_DIR folder data: dataset_NUMBER_files
+  # report_files_path = Sys.getenv('REPORT_FILES_PATH')
+  # output_dir = tail(strsplit(report_files_path, '/')[[1]], 1)
+  
+  files = list.files(path = dir, recursive = FALSE, full.names = TRUE)
+  # files also include directorys, need to remove directorys
+  files = files[!dir.exists(files)]
+  dirs = list.dirs(path = dir, recursive = FALSE, full.names = TRUE)
+  # exclude .ipynb_checkpoints folder
+  # ipynb_checkpoints = grep(pattern = 'ipynb_checkpoints', x = dirs)
+  # dirs = dirs[-ipynb_checkpoints]
+  github_repo_url = 'https://github.com/MingChen0919/learning-apache-spark/blob/master/'
+  tags$ul(
+    {
+      if (length(files) > 0) {
+        lapply(files, function(x){
+          path_end = tail(strsplit(x, '/')[[1]],1)
+          li_item = tags$li(tags$a(path_end, href=paste0(github_repo_url, x)))
+          li_item$attribs = list('data-jstree'='{"icon":"jstree-file"}')
+          li_item
+        })
+      }
+    },
+    {
+      if (length(dirs) > 0) {
+        lapply(dirs, function(x){
+          path_end = tail(strsplit(x, '/')[[1]],1)
+          if (!(path_end %in% c('vakata-jstree-3.3.5', '.ipynb_checkpoints', 'spark-warehouse', 'ipynb'))) {
+            li_item = tags$li(path_end, file_tree(x))
+            li_item$attribs = list('data-jstree' = '{"icon":"jstree-folder"}', class=list('jstree-open'))
+            li_item
+          }
+        })
+      }
+    }
+  )
+}
+```
+
+
+**[Ming Chen](https://github.com/MingChen0919) & [Wenqiang Feng](http://web.utk.edu/~wfeng1/)**
+
+## Introduction
+
+This repository contains mainly notes from learning Apache Spark by [Ming Chen](https://github.com/MingChen0919) & [Wenqiang Feng](http://web.utk.edu/~wfeng1/). We try to use the detailed demo code and examples to show how to use pyspark for big data mining. **If you find your work wasn't cited in this note, please feel free to let us know.**
+
+
+## Cheat Sheets
+
++ [Python Basics](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/PythonForDataScience.pdf)
++ [Pandas Basics](http://datacamp-community.s3.amazonaws.com/3857975e-e12f-406a-b3e8-7d627217e952)
++ [Numpy Basics](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Numpy_Python_Cheat_Sheet.pdf)
++ [Scikit-Learn](http://datacamp-community.s3.amazonaws.com/5433fa18-9f43-44cc-b228-74672efcd116)
++ [RDD Basics](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/PySpark_Cheat_Sheet_Python.pdf)
++ [DataFrame Basics](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/PySpark_SQL_Cheat_Sheet_Python.pdf)
++ [Apache Spark Cheat Sheet](https://hackr.io/tutorials/learn-apache-spark)
+    
+## Contents
+
+```{r, echo=FALSE}
+# create a div container to store the file tree interface
+tags$div(
+  id="jstree",
+  file_tree('notebooks')
+)
+```
+
+
+## Feedback and suggestions
+
+Your comments and suggestions are highly appreciated. We are more than happy to receive corrections, suggestions or feedbacks for improvements.

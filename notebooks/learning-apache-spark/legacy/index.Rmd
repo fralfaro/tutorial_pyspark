@@ -1,0 +1,6 @@
+---
+title: "Learning Apache Spark"
+output: html_document
+---
+
+**All materials are converted to notebooks (in ipynb format) and moved to the github repository. Click here to go to the [repository](https://github.com/MingChen0919/learning-apache-spark/blob/master/README.md).**
